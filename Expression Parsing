@@ -1,0 +1,108 @@
+from pythonds.basic import Stack
+#Zadanie domowe ARC : Expression Parsing
+def infixToPostfix(infixexpr):
+    prec = {}
+    prec["*"] = 3
+    prec["/"] = 3
+    prec["+"] = 2
+    prec["-"] = 2
+    prec["("] = 1
+    opStack = Stack()
+    postfixList = []
+    tokenList = infixexpr.split()
+
+    for token in tokenList:
+        if token in "ABCDEFGHIJKLMNOPQRSTUVWXYZ" or token in "0123456789":
+            postfixList.append(token)
+        elif token == '(':
+            opStack.push(token)
+        elif token == ')':
+            topToken = opStack.pop()
+            while topToken != '(':
+                postfixList.append(topToken)
+                topToken = opStack.pop()
+        else:
+            while (not opStack.isEmpty()) and \
+               (prec[opStack.peek()] >= prec[token]):
+                  postfixList.append(opStack.pop())
+            opStack.push(token)
+
+    while not opStack.isEmpty():
+        postfixList.append(opStack.pop())
+    return " ".join(postfixList)
+
+
+infixed = "( A + B ) * C - ( D - E ) * ( F + G )"
+print("Infix : ",infixed)
+postfixed = infixToPostfix(infixed)
+print("Postfix : ",postfixed)
+
+#  zamiana postfix to prefix
+#sprawdzenie czy znak jet operatorem czy nie
+def isOperator(x):
+ 
+    if x == "+":
+        return True
+ 
+    if x == "-":
+        return True
+ 
+    if x == "/":
+        return True
+ 
+    if x == "*":
+        return True
+ 
+    return False
+ 
+def postToPre(post_exp):
+ 
+    s = []
+ 
+    # długość wyrażenia 
+    length = len(post_exp)
+ 
+    # czytanie od lewej do prawej
+    for i in range(length):
+ 
+        # sprawdzenie czy szymbol jest
+        if (isOperator(post_exp[i])):
+ 
+           
+            # popowanie dwóch operandów ze stosu
+            op1 = s[-1]
+            s.pop()
+            op2 = s[-1]
+            s.pop()
+ 
+            # concat the operands and operator
+            # połączenie operandów i operatorów
+            temp = post_exp[i] + op2 + op1
+ 
+           
+            #pushowanie stringa temp z powrotem do stosu
+            s.append(temp)
+ 
+        # jeśli symbol jest operandem
+        else:
+ 
+            # pushowanie operanda na stos
+            s.append(post_exp[i])
+ 
+    
+    ans = ""
+    for i in s:
+        ans += i
+    return ans
+ 
+ 
+
+if __name__ == "__main__":
+ 
+    post_exp = postfixed
+    #usuwanie spacji miedzy znaki oraz wywołanie funkcji postToPre
+    post_delspace=postToPre(post_exp.replace(" ", "")) 
+    
+    #dodanie spacji miedzy znakami
+    print("Prefix : ", " ".join(post_delspace))
+    
